@@ -42,7 +42,7 @@ export default function App() {
 
         if (!savedToken) {
           // Se não existir token, faz login (pode vir de um formulário depois)
-          const res = await fetch("http://https://assistente-neurocom.onrender.com/login", {
+          const res = await fetch("https://assistente-neurocom.onrender.com/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: "usuario@teste.com", senha: "123456" })
@@ -58,7 +58,7 @@ export default function App() {
           setToken(savedToken);
 
           // carregar histórico
-          const histRes = await fetch(`http://https://assistente-neurocom.onrender.com/chat-historico/${sessionId}`, {
+          const histRes = await fetch(`https://assistente-neurocom.onrender.com/chat-historico/${sessionId}`, {
             headers: { Authorization: "Bearer " + savedToken }
           });
           const histData = await histRes.json();
@@ -97,7 +97,7 @@ export default function App() {
     setIsTyping(true);
 
     try {
-      const res = await fetch("http://https://assistente-neurocom.onrender.com/chat-rag", {
+      const res = await fetch("https://assistente-neurocom.onrender.com/chat-rag", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

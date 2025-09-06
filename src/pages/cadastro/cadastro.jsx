@@ -22,7 +22,7 @@ function Cadastro({ setLogado }) {
     }
 
     try {
-      const res = await axios.post('http://https://assistente-neurocom.onrender.com/usuarios', {
+      const res = await axios.post('https://assistente-neurocom.onrender.com/usuarios', {
         nome: nomeTrim,
         email: emailTrim,
         senha: senhaTrim,
@@ -39,7 +39,7 @@ function Cadastro({ setLogado }) {
 
   // Exemplo: cadastro via Google (se implementar OAuth)
   const handleGoogleLogin = () => {
-    window.location.href = 'http://https://assistente-neurocom.onrender.com/auth/google';
+    window.location.href = 'https://assistente-neurocom.onrender.com/auth/google';
   };
 
   // Checa se veio token na URL (cadastro Google)
