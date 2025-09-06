@@ -11,7 +11,7 @@ function Login({ setLogado }) {
 
   const handleLogin = async () => {
   try {
-    const res = await axios.post('http://https://assistente-neurocom.onrender.com:3000/login', { email, senha });
+    const res = await axios.post('http://https://assistente-neurocom.onrender.com/login', { email, senha });
     console.log('Resposta backend:', res.data); // <-- verifique aqui
     localStorage.setItem('token', res.data.token);
     setLogado(true);
@@ -25,7 +25,7 @@ function Login({ setLogado }) {
 
   // Exemplo: login via Google (se implementar OAuth)
   const handleGoogleLogin = () => {
-    window.location.href = 'http://https://assistente-neurocom.onrender.com:3000/auth/google';
+    window.location.href = 'http://https://assistente-neurocom.onrender.com/auth/google';
   };
 
   // Checa se veio token na URL (login Google)
