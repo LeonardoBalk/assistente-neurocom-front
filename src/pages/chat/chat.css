@@ -1,0 +1,650 @@
+/* ================================
+   Medical Copilot Chat UI Styles
+   "Perfeita, linda e moderna" 🌿🩺
+   ================================ */
+
+/* Reset básico para garantir bordas e layout consistente */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-color: hsl(var(--border));
+}
+
+/* Definição de variáveis do tema (light e dark) */
+:root {
+  --background: 210 20% 98%;
+  --foreground: 215 25% 27%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 215 25% 27%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 215 25% 27%;
+
+  --primary: 200 95% 47%;
+  --primary-foreground: 0 0% 100%;
+
+  /* Paleta da logo */
+  --medical-green: 104 17% 47%; /* #6B8E62 */
+  --medical-blue: 197 25% 32%;  /* #3D5C66 */
+  --gradient-medical: linear-gradient(135deg, hsl(var(--medical-green)), hsl(var(--medical-blue)));
+  --shadow-medical: 0 10px 30px -10px hsl(var(--medical-blue) / 0.3);
+
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222.2 84% 4.9%;
+
+  --radius: 0.75rem;
+
+  --sidebar-background: 0 0% 98%;
+  --sidebar-foreground: 240 5.3% 26.1%;
+  --sidebar-primary: 240 5.9% 10%;
+  --sidebar-primary-foreground: 0 0% 98%;
+  --sidebar-accent: 240 4.8% 95.9%;
+  --sidebar-accent-foreground: 240 5.9% 10%;
+  --sidebar-border: 220 13% 91%;
+  --sidebar-ring: 217.2 91.2% 59.8%;
+
+  --glass: color-mix(in oklab, hsl(var(--card)) 82%, transparent);
+  --glass-dark: color-mix(in oklab, hsl(var(--card)) 65%, transparent);
+}
+
+.dark {
+  --background: 215 28% 17%;
+  --foreground: 210 20% 98%;
+
+  --card: 215 28% 17%;
+  --card-foreground: 210 20% 98%;
+
+  --popover: 215 28% 17%;
+  --popover-foreground: 210 20% 98%;
+
+  --primary: 200 95% 47%;
+  --primary-foreground: 0 0% 100%;
+
+  /* Paleta da logo no dark mode */
+  --medical-green: 104 17% 47%;
+  --medical-blue: 197 25% 32%;
+
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 212.7 26.8% 83.9%;
+
+  --sidebar-background: 240 5.9% 10%;
+  --sidebar-foreground: 240 4.8% 95.9%;
+  --sidebar-primary: 224.3 76.3% 48%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 240 3.7% 15.9%;
+  --sidebar-accent-foreground: 240 4.8% 95.9%;
+  --sidebar-border: 240 3.7% 15.9%;
+  --sidebar-ring: 217.2 91.2% 59.8%;
+
+  --glass: color-mix(in oklab, hsl(var(--card)) 70%, transparent);
+  --glass-dark: color-mix(in oklab, hsl(var(--card)) 55%, transparent);
+}
+
+/* Body base */
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background:
+    radial-gradient(1200px 500px at 10% -10%, hsl(var(--medical-green) / 0.08), transparent 60%),
+    radial-gradient(1000px 480px at 110% 10%, hsl(var(--medical-blue) / 0.08), transparent 60%),
+    hsl(var(--background));
+  color: hsl(var(--foreground));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Links e focos */
+a {
+  color: hsl(var(--medical-blue));
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 3px;
+  border-radius: calc(var(--radius) / 2);
+}
+
+/* Scrollbar moderna */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--medical-blue)) transparent;
+}
+*::-webkit-scrollbar { height: 8px; width: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, hsl(var(--medical-blue) / 0.7), hsl(var(--medical-green) / 0.7));
+  border-radius: 999px;
+}
+
+/* Layout principal */
+.app {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  min-height: 100vh;
+  gap: 0;
+}
+
+/* Sidebar esquerda (branding, navegação, usuário) */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: hsl(var(--sidebar-background));
+  color: hsl(var(--sidebar-foreground));
+  border-right: 1px solid hsl(var(--sidebar-border));
+  padding: 1.25rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.logo {
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: 0.2px;
+  background: var(--gradient-medical);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 1rem;
+}
+
+.search {
+  width: 100%;
+  background: hsl(var(--sidebar-accent));
+  border: 1px solid hsl(var(--sidebar-border));
+  border-radius: 999px;
+  padding: 0.65rem 1rem;
+  color: hsl(var(--sidebar-foreground));
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  margin-bottom: 1rem;
+}
+.search::placeholder { color: hsl(var(--muted-foreground)); }
+.search:focus {
+  border-color: hsl(var(--sidebar-ring));
+  box-shadow: 0 0 0 4px hsl(var(--sidebar-ring) / 0.15);
+  background: hsl(var(--card));
+}
+
+.menu {
+  display: grid;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+.menu a {
+  display: block;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.6rem;
+  color: hsl(var(--sidebar-foreground));
+  border: 1px solid transparent;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.08s ease;
+}
+.menu a:hover {
+  background: hsl(var(--sidebar-accent));
+  border-color: hsl(var(--sidebar-border));
+}
+.menu a:active {
+  transform: translateY(1px);
+}
+
+.user-box {
+  margin-top: 1rem;
+  background: var(--gradient-medical);
+  border: 1px solid hsl(var(--sidebar-border));
+  border-radius: 1rem;
+  padding: 0.9rem;
+  box-shadow: var(--shadow-medical);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.8rem;
+  color: var(--glass);
+}
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 2px solid hsl(var(--medical-blue) / 0.4);
+  box-shadow: 0 6px 16px -6px hsl(var(--medical-blue) / 0.4);
+}
+.user-text {
+  display: grid;
+}
+.user-name {
+  font-weight: 700;
+  color: hsl(var(--sidebar-foreground));
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--glass)
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  background: linear-gradient(135deg, hsl(var(--medical-green) / 0.15), hsl(var(--medical-blue) / 0.15));
+  color: hsl(var(--sidebar-foreground));
+  border: 1px solid hsl(var(--sidebar-border));
+}
+.user-email {
+  font-size: 0.8rem;
+  color: var(--glass);
+}
+
+.pro-btn {
+  width: 100%;
+  border: none;
+  cursor: pointer;
+  padding: 0.7rem 1rem;
+  border-radius: 0.8rem;
+  background: var(--gradient-medical);
+  color: hsl(var(--primary-foreground));
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  box-shadow: 0 12px 30px -12px hsl(var(--medical-blue) / 0.5);
+  transition: transform 0.08s ease, box-shadow 0.2s ease, filter 0.2s;
+}
+.pro-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 38px -12px hsl(var(--medical-blue) / 0.6);
+  filter: brightness(1.04);
+}
+.pro-btn:active { transform: translateY(0); }
+
+/* Painel principal */
+.main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background:
+    radial-gradient(1000px 500px at -10% 100%, hsl(var(--medical-green) / 0.06), transparent 60%),
+    radial-gradient(1000px 500px at 110% -10%, hsl(var(--medical-blue) / 0.06), transparent 60%),
+    hsl(var(--background));
+}
+
+.content {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  min-height: 0; /* necessário para overflow funcionar na área de chat */
+}
+
+/* Área de chat (mensagens) */
+.chat-area {
+  position: relative;
+  overflow-y: auto;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 1rem;
+  padding: 1.25rem;
+  scroll-behavior: smooth;
+  box-shadow: 0 20px 40px -20px hsl(var(--medical-blue) / 0.25);
+}
+
+/* Indicador de overflow sutil no topo */
+.chat-area::before {
+  content: "";
+  position: sticky;
+  top: -1px;
+  display: block;
+  height: 14px;
+  margin: -14px -1.25rem 0;
+  background: linear-gradient(to bottom, hsl(var(--background)), transparent);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Bolhas de mensagem */
+.msg-usuario,
+.msg-bot {
+  max-width: min(72ch, 88%);
+  width: fit-content;
+  padding: 0.85rem 1rem;
+  margin: 0.5rem 0;
+  line-height: 1.5;
+  border-radius: 1rem;
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 10px 24px -16px hsl(var(--medical-blue) / 0.35);
+  animation: bubbleIn 220ms ease-out both;
+  word-break: break-word;
+}
+
+/* Usuário: à direita, cápsula sóbria */
+.msg-usuario {
+  margin-left: auto;
+  background: hsl(var(--secondary));
+  color: hsl(var(--sidebar-primary));
+  border-top-right-radius: 0.4rem;
+}
+
+/* Bot: à esquerda, com leve gradiente médico */
+.msg-bot {
+  margin-right: auto;
+  background:
+    linear-gradient(180deg, hsl(var(--card)), hsl(var(--card)) 60%, hsl(var(--medical-blue) / 0.06));
+  color: hsl(var(--card-foreground));
+  border-top-left-radius: 0.4rem;
+  position: relative;
+}
+
+/* Anel sutil nas bolhas ao focar via teclado (acessibilidade) */
+.msg-usuario:focus-within,
+.msg-bot:focus-within {
+  box-shadow:
+    0 10px 24px -16px hsl(var(--medical-blue) / 0.35),
+    0 0 0 4px hsl(var(--primary) / 0.12);
+}
+
+/* Tipagem (.. + animação) */
+.msg-bot:has(> :only-child:empty),
+.msg-bot:has(> .typing) {
+  opacity: 0.9;
+}
+@keyframes bubbleIn {
+  from { transform: translateY(6px) scale(0.98); opacity: 0.0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Conteúdo Markdown dentro das mensagens */
+.msg-usuario h1, .msg-bot h1,
+.msg-usuario h2, .msg-bot h2,
+.msg-usuario h3, .msg-bot h3 {
+  margin: 0.2rem 0 0.5rem;
+  line-height: 1.25;
+}
+.msg-usuario p, .msg-bot p {
+  margin: 0.35rem 0;
+}
+.msg-usuario ul, .msg-bot ul,
+.msg-usuario ol, .msg-bot ol {
+  margin: 0.4rem 0 0.6rem 1.25rem;
+}
+.msg-usuario li, .msg-bot li {
+  margin: 0.2rem 0;
+}
+.msg-usuario a, .msg-bot a {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.msg-usuario code, .msg-bot code {
+  background: hsl(var(--muted) / 0.7);
+  color: hsl(var(--sidebar-primary));
+  padding: 0.15rem 0.35rem;
+  border-radius: 0.4rem;
+  border: 1px solid hsl(var(--border));
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.92em;
+}
+.msg-usuario pre, .msg-bot pre {
+  background: hsl(var(--sidebar-background));
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.75rem;
+  padding: 0.8rem;
+  overflow: auto;
+  box-shadow: inset 0 1px 0 hsl(var(--card) / 0.5);
+}
+.msg-usuario pre code, .msg-bot pre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+.msg-usuario blockquote, .msg-bot blockquote {
+  margin: 0.6rem 0;
+  padding: 0.6rem 0.8rem;
+  border-left: 4px solid hsl(var(--medical-blue));
+  background: hsl(var(--muted));
+  color: hsl(var(--card-foreground));
+  border-radius: 0 0.6rem 0.6rem 0;
+}
+
+/* Sidebar da conversa (histórico de chats) */
+.chat-sidebar {
+  background: var(--glass);
+  border: 1px solid hsl(var(--border));
+  border-radius: 1rem;
+  padding: 0.9rem;
+  backdrop-filter: saturate(140%) blur(8px);
+  box-shadow: 0 18px 36px -18px hsl(var(--medical-blue) / 0.3);
+  min-width: 0;
+}
+
+.new-chat {
+  width: 100%;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  padding: 0.65rem 0.8rem;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.08s ease, box-shadow 0.2s ease, background 0.2s;
+  box-shadow: 0 10px 24px -16px hsl(var(--medical-blue) / 0.3);
+}
+.new-chat:hover {
+  background: linear-gradient(180deg, hsl(var(--card)), hsl(var(--medical-green) / 0.08));
+}
+.new-chat:active { transform: translateY(1px); }
+
+.chat-title {
+  margin: 0.9rem 0 0.5rem;
+  font-size: 0.9rem;
+  color: hsl(var(--muted-foreground));
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.chat-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.4rem;
+  max-height: calc(100vh - 240px);
+  overflow: auto;
+}
+.chat-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  background: hsl(var(--secondary));
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  transition: background 0.2s, transform 0.08s ease, border-color 0.2s;
+  cursor: pointer;
+}
+.chat-list li:hover {
+  background: linear-gradient(180deg, hsl(var(--secondary)), hsl(var(--medical-blue) / 0.06));
+  border-color: hsl(var(--medical-blue) / 0.35);
+}
+.chat-list li small {
+  color: hsl(var(--muted-foreground));
+}
+
+/* Rodapé (composer) */
+.footer {
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(0deg, hsl(var(--background)), hsl(var(--background) / 0.6));
+  border-top: 1px solid hsl(var(--border));
+  padding: 0.9rem 1.25rem;
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.input {
+  flex: 1;
+  min-height: 44px;
+  border-radius: 999px;
+  border: 1px solid hsl(var(--input));
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
+  padding: 0.65rem 1rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  box-shadow: inset 0 -1px 0 hsl(var(--border));
+}
+.input::placeholder { color: hsl(var(--muted-foreground)); }
+.input:focus {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 4px hsl(var(--primary) / 0.15);
+}
+
+.footer button {
+  height: 44px;
+  padding: 0 1.1rem;
+  border-radius: 999px;
+  border: 1px solid hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  background: var(--gradient-medical);
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  box-shadow: 0 12px 30px -12px hsl(var(--medical-blue) / 0.55);
+  transition: transform 0.08s ease, filter 0.2s, box-shadow 0.2s;
+}
+.footer button:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 18px 38px -14px hsl(var(--medical-blue) / 0.55);
+}
+.footer button:active { transform: translateY(1px); }
+
+/* Estados e utilitários */
+.msg-bot.error {
+  border-color: hsl(var(--destructive));
+  background: linear-gradient(180deg, hsl(var(--destructive) / 0.08), transparent);
+  color: hsl(var(--destructive-foreground));
+}
+
+/* Indicador de digitação com os pontos existentes (..{dots}) */
+.msg-bot:has(> .typing),
+.msg-bot:has(> :only-child) {
+  /* Mantém estilos base; abaixo, estilo dos três pontos via pseudo-elemento opcional */
+}
+.typing-dots {
+  display: inline-flex;
+  gap: 4px;
+}
+.typing-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: hsl(var(--medical-blue));
+  display: inline-block;
+  animation: blink 1.2s infinite ease-in-out;
+}
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-2px); }
+}
+
+/* Seleção de texto */
+::selection {
+  background: hsl(var(--medical-blue) / 0.2);
+}
+
+/* Modo escuro: vidro mais escuro e contrastes ajustados automaticamente via tokens */
+.dark .chat-sidebar {
+  background: var(--glass-dark);
+}
+
+/* Responsividade */
+@media (max-width: 1100px) {
+  .content {
+    grid-template-columns: 1fr 280px;
+  }
+}
+@media (max-width: 900px) {
+  .app {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    position: relative;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid hsl(var(--border));
+  }
+  .content {
+    grid-template-columns: 1fr;
+  }
+  .chat-sidebar {
+    order: -1;
+  }
+}
+@media (max-width: 600px) {
+  .footer {
+    padding: 0.75rem 0.9rem;
+    gap: 0.5rem;
+  }
+  .input { min-height: 42px; }
+  .footer button { height: 42px; }
+  .msg-usuario, .msg-bot { max-width: 92%; }
+}
+
+/* Toques de “marca médica” sutis nos títulos markdown dentro do bot */
+.msg-bot h1, .msg-bot h2 {
+  background: linear-gradient(90deg, hsl(var(--medical-green)), hsl(var(--medical-blue)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 800;
+}
+
+/* Pequenos separadores */
+.msg-usuario hr, .msg-bot hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, hsl(var(--border)), transparent);
+  margin: 0.75rem 0;
+}
+
