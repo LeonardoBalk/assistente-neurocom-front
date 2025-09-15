@@ -3,6 +3,9 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+
 function Login({ setLogado }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -11,7 +14,7 @@ function Login({ setLogado }) {
 
   const handleLogin = async () => {
   try {
-    const res = await axios.post('https://assistente-neurocom.onrender.com/login', { email, senha });
+    const res = await axios.post(`${BACKEND_URL}/login`, { email, senha });
     console.log('Resposta backend:', res.data); // <-- verifique aqui
     localStorage.setItem('token', res.data.token);
     setLogado(true);
@@ -25,7 +28,7 @@ function Login({ setLogado }) {
 
   // Exemplo: login via Google (se implementar OAuth)
   const handleGoogleLogin = () => {
-    window.location.href = 'https://assistente-neurocom.onrender.com/auth/google';
+    window.location.href = `${BACKEND_URL}/auth/google`;
   };
 
   // Checa se veio token na URL (login Google)
