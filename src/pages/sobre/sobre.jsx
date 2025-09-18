@@ -40,8 +40,7 @@ export default function Sobre() {
         </div>
         <div className="sobre-hero-inner reveal" style={{ ["--reveal-delay"]: "60ms" }}>
           <h1 className="shine">
-            Relações que transformam.<br />
-            Inteligência que aproxima.
+            Assistente IA Neurocom
           </h1>
           <p className="sobre-lead">
             Inovação em atendimento digital para clínica, educação e organizações.<br />

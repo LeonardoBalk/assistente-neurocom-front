@@ -680,10 +680,7 @@ a:hover { text-decoration: underline; }
   .msg-usuario, .msg-bot { max-width: 92%; }
 }
 
-html, body {
-  height: 100%;
-  overflow: hidden; /* impede rolagem global */
-}
+
 
 .app {
   height: 100vh; /* garante que o grid não ultrapasse */
@@ -704,5 +701,228 @@ html, body {
   /* já tem overflow-y: auto; manter */
   display: flex;
   flex-direction: column;
+}
+
+/* ==== Pesquisa de sessões ==== */
+.search-wrapper {
+  position: relative;
+  margin: 0.75rem 0 0.5rem;
+}
+
+.search {
+  width: 100%;
+  height: 38px;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
+  padding: 0 2.2rem 0 0.85rem;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  transition: border-color 0.18s ease, background 0.25s ease;
+}
+
+.search:focus {
+  outline: none;
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.25);
+}
+
+.search-clear {
+  position: absolute;
+  top: 50%;
+  right: 0.35rem;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.05rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  color: hsl(var(--muted-foreground));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-clear:hover {
+  background: hsl(var(--accent));
+  color: hsl(var(--foreground));
+}
+
+.search-feedback {
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-bottom: 0.4rem;
+  padding-left: 2px;
+}
+
+.hl {
+  background: linear-gradient(90deg, hsl(var(--medical-green) / 0.35), hsl(var(--medical-blue) / 0.35));
+  padding: 0 2px;
+  border-radius: 3px;
+}
+
+/* ===== Seleção e exclusão de sessões ===== */
+.sessions-toolbar {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.select-toggle {
+  height: 38px;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--accent));
+  color: hsl(var(--foreground));
+  padding: 0 0.75rem;
+  font-size: 0.75rem;
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.select-toggle:hover {
+  filter: brightness(1.05);
+}
+
+.selection-actions {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  padding: 0.6rem 0.6rem 0.55rem;
+  border-radius: 10px;
+  margin-bottom: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  animation: fade-in 0.25s ease;
+}
+
+.selection-info {
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  opacity: 0.8;
+  text-transform: uppercase;
+}
+
+.selection-buttons {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.mini-btn {
+  background: hsl(var(--secondary));
+  border: 1px solid hsl(var(--border));
+  padding: 0.35rem 0.6rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  border-radius: 6px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.mini-btn:hover {
+  background: hsl(var(--accent));
+}
+
+.mini-btn.delete {
+  background: hsl(var(--destructive) / 0.85);
+  color: #fff;
+  border-color: hsl(var(--destructive));
+}
+
+.mini-btn.delete:hover {
+  background: hsl(var(--destructive));
+}
+
+.delete-feedback {
+  font-size: 0.65rem;
+  color: hsl(var(--foreground));
+  opacity: 0.8;
+}
+
+.chat-list.selection-mode li {
+  cursor: pointer;
+}
+
+.session-checkbox {
+  margin-right: 0.55rem;
+  accent-color: hsl(var(--primary));
+  cursor: pointer;
+}
+
+.chat-list li.checked {
+  background: linear-gradient(90deg,
+    hsl(var(--medical-green) / 0.22),
+    hsl(var(--medical-blue) / 0.22));
+  border-color: hsl(var(--primary) / 0.6);
+  position: relative;
+}
+
+.chat-list li.checked::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid hsl(var(--primary) / 0.5);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.delete-session-btn {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 2px 4px;
+  color: hsl(var(--muted-foreground));
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.chat-list li:hover .delete-session-btn {
+  opacity: 1;
+}
+
+.delete-session-btn:hover {
+  color: hsl(var(--destructive));
+  filter: drop-shadow(0 0 4px hsl(var(--destructive) / 0.4));
+}
+
+.rename-input {
+  width: 100%;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
+  padding: 4px 6px;
+  outline: none;
+}
+
+.rename-input:focus {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.3);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 

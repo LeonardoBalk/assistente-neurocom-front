@@ -437,3 +437,40 @@ button.primary:active {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* --- Logo no formulário de login --- */
+.logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.1rem;
+  /* Se quiser um leve brilho: */
+  /* filter: drop-shadow(0 4px 12px hsl(var(--medical-blue) / 0.25)); */
+}
+
+.logo img {
+  width: 120px;
+  height: auto;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+  animation: logo-fade-in 0.6s ease;
+  /* Suave adaptação em dark mode */
+  transition: filter 0.3s ease;
+}
+
+.dark .logo img {
+  /* Se tiver versão clara, você pode trocar a fonte: content via <source> ou conditional */
+  filter: brightness(1.05) contrast(1.05);
+}
+
+@keyframes logo-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

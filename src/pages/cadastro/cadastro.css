@@ -315,3 +315,120 @@
     0 4px 10px rgba(0, 0, 0, 0.25);
 }
 
+/* --- Logo no formulário de cadastro --- */
+.logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.1rem;
+}
+
+.logo img {
+  width: 120px;
+  height: auto;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+  animation: logo-fade-in 0.6s ease;
+  transition: filter 0.3s ease;
+}
+
+.dark .logo img {
+  filter: brightness(1.05) contrast(1.05);
+}
+
+@keyframes logo-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Campos agrupados */
+.field {
+  margin-bottom: 0.75rem;
+  position: relative;
+}
+
+/* Estado de erro */
+.input-error {
+  border-color: hsl(var(--destructive)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--destructive) / 0.15);
+}
+
+.field .error {
+  font-size: 0.8rem;
+  margin-top: 0.4rem;
+  color: hsl(var(--destructive));
+}
+
+/* Medidor de força da senha */
+.password-strength-wrapper {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.password-meter {
+  flex: 1 1 140px;
+  height: 8px;
+  background: hsl(var(--border));
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+
+.password-meter-bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #2563eb, #059669);
+  transition: width 0.35s ease, background 0.35s ease;
+}
+
+.password-status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  min-width: 90px;
+}
+
+/* Regras da senha (expansível) */
+.password-rules {
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.password-rules summary {
+  cursor: pointer;
+  font-weight: 600;
+  outline: none;
+}
+
+.password-rules[open] {
+  padding-bottom: 0.25rem;
+}
+
+.password-rules ul {
+  margin: 0.4rem 0 0 1rem;
+  padding: 0;
+  list-style: disc;
+}
+
+.password-rules li {
+  line-height: 1.2;
+  margin-bottom: 0.2rem;
+}
+
+/* Botão desabilitado (já existe uma regra global .button:disabled, se quiser reforçar) */
+.button:disabled {
+  opacity: 0.55;
+  filter: grayscale(0.2);
+  cursor: not-allowed;
+}

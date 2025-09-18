@@ -1,28 +1,39 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import "./chat.css";
 import ReactMarkdown from "react-markdown";
 
 const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export default function App() {
- /* estados */
+  /* ===== Estados principais ===== */
   const [mensagem, setMensagem] = useState("");
   const [historico, setHistorico] = useState([]);
   const [token, setToken] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [dots, setDots] = useState("");
-  const [sessions, setSessions] = useState([]);      // sessões existentes
+  const [sessions, setSessions] = useState([]);
   const [currentSessionId, setCurrentSessionId] = useState(null);
   const [loadingSessions, setLoadingSessions] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [sending, setSending] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  /* renomear sessão */
+  /* Renomear sessão */
   const [editingSessionId, setEditingSessionId] = useState(null);
   const [editingTitleValue, setEditingTitleValue] = useState("");
 
+  /* ===== Seleção / exclusão de sessões ===== */
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedSessions, setSelectedSessions] = useState(new Set());
+  const [deleting, setDeleting] = useState(false);
+  const [deleteFeedback, setDeleteFeedback] = useState("");
 
+  /* ===== Pesquisa ===== */
+  const [sessionSearch, setSessionSearch] = useState("");
+  const searchInputRef = useRef(null);
+
+  /* ===== Tema / Configurações ===== */
+  const SETTINGS_KEY = "app_settings";
   const getInitialTheme = () => {
     try {
       const stored = localStorage.getItem("theme");
@@ -38,10 +49,7 @@ export default function App() {
     else root.classList.remove("dark");
     try { localStorage.setItem("theme", theme); } catch {}
   }, [theme]);
-  const toggleTheme = () => setTheme(t => (t === "dark" ? "light" : "dark"));
 
-  /* ===== Settings overlay ===== */
-  const SETTINGS_KEY = "app_settings";
   const getInitialSettings = () => {
     try {
       const raw = localStorage.getItem(SETTINGS_KEY);
@@ -66,18 +74,13 @@ export default function App() {
   const updateSetting = (field, value) =>
     setSettings(prev => ({ ...prev, [field]: value }));
 
-  /* Aplicar escala de fonte */
   useEffect(() => {
     document.documentElement.style.setProperty("--font-scale", settings.fontScale + "%");
   }, [settings.fontScale]);
-
-  /* Forçar tema por preferência */
   useEffect(() => {
     if (settings.themePref === "light") setTheme("light");
     else if (settings.themePref === "dark") setTheme("dark");
-    // auto => não força
   }, [settings.themePref]);
-
   useEffect(() => {
     try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); } catch {}
   }, [settings]);
@@ -85,7 +88,6 @@ export default function App() {
   const [showSettings, setShowSettings] = useState(false);
   const settingsTriggerRef = useRef(null);
   const drawerRef = useRef(null);
-
   const openSettings = (triggerEl) => {
     settingsTriggerRef.current = triggerEl || null;
     setShowSettings(true);
@@ -94,8 +96,6 @@ export default function App() {
     setShowSettings(false);
     requestAnimationFrame(() => settingsTriggerRef.current?.focus?.());
   };
-
-  /* Focus trap & ESC */
   useEffect(() => {
     if (!showSettings) return;
     const handleKey = (e) => {
@@ -125,7 +125,7 @@ export default function App() {
     return () => window.removeEventListener("keydown", handleKey);
   }, [showSettings]);
 
-  /* ===================== Login e carga inicial ===================== */
+  /* ===== Login inicial ===== */
   useEffect(() => {
     const iniciar = async () => {
       try {
@@ -137,7 +137,7 @@ export default function App() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: "usuario@teste.com", senha: "123456" })
           });
-          const data = await res.json();
+            const data = await res.json();
           if (data.token) {
             savedToken = data.token;
             localStorage.setItem("token", savedToken);
@@ -154,13 +154,12 @@ export default function App() {
     iniciar();
   }, []);
 
-  /* Carregar sessões quando token disponível */
+  /* ===== Carregar sessões ===== */
   useEffect(() => {
     if (!token) return;
     fetchSessions();
   }, [token]);
 
-  /* ===================== Fetch sessions ===================== */
   const fetchSessions = useCallback(async () => {
     if (!token) return;
     setLoadingSessions(true);
@@ -173,10 +172,8 @@ export default function App() {
       if (data.sessoes) {
         setSessions(data.sessoes);
         if (data.sessoes.length > 0) {
-          // seleciona a primeira (mais recente)
-            setCurrentSessionId(prev => prev || data.sessoes[0].id);
+          setCurrentSessionId(prev => prev || data.sessoes[0].id);
         } else {
-          // cria uma nova sessão automaticamente
           await handleNewChat(true);
         }
       } else {
@@ -190,7 +187,7 @@ export default function App() {
     }
   }, [token]);
 
-  /* ===================== Carrega histórico da sessão ativa ===================== */
+  /* ===== Histórico da sessão ativa ===== */
   useEffect(() => {
     if (!token || !currentSessionId) return;
     const loadHistory = async () => {
@@ -221,7 +218,7 @@ export default function App() {
     loadHistory();
   }, [token, currentSessionId]);
 
-  /* ===================== Animação digitação ===================== */
+  /* ===== Animação typing ===== */
   useEffect(() => {
     if (!isTyping) return;
     const interval = setInterval(() => {
@@ -230,7 +227,7 @@ export default function App() {
     return () => clearInterval(interval);
   }, [isTyping]);
 
-  /* ===================== Enviar mensagem ===================== */
+  /* ===== Enviar mensagem ===== */
   const enviarMensagem = async () => {
     if (!mensagem.trim() || !token) return;
     if (sending) return;
@@ -253,15 +250,10 @@ export default function App() {
         body: JSON.stringify({ mensagem: mensagemAtual, sessionId: currentSessionId })
       });
       const data = await res.json();
+      if (data.erro) throw new Error(data.erro);
 
-      if (data.erro) {
-        throw new Error(data.erro);
-      }
-
-      // Se backend criou nova sessão
       if (data.sessionId && data.sessionId !== currentSessionId) {
         setCurrentSessionId(data.sessionId);
-        // Recarregar sessões (para aparecer a nova)
         fetchSessions();
       }
 
@@ -279,7 +271,7 @@ export default function App() {
     }
   };
 
-  /* ===================== Novo Chat ===================== */
+  /* ===== Nova sessão ===== */
   const handleNewChat = async (silent = false) => {
     if (!token) return;
     try {
@@ -308,26 +300,29 @@ export default function App() {
     }
   };
 
-  /* ===================== Selecionar Chat ===================== */
+  /* ===== Selecionar sessão ===== */
   const handleSelectSession = (id) => {
+    if (selectionMode) {
+      toggleSelect(id);
+      return;
+    }
     if (id === currentSessionId) return;
     setCurrentSessionId(id);
     setHistorico([]);
   };
 
-  /* ===================== Renomear sessão ===================== */
+  /* ===== Renomear sessão ===== */
   const startRename = (sessao) => {
+    if (selectionMode) return; // não renomeia em modo seleção
     setEditingSessionId(sessao.id);
     setEditingTitleValue(sessao.titulo || "");
   };
-
   const commitRename = async () => {
     const id = editingSessionId;
     if (!id) return;
     const newTitle = editingTitleValue.trim();
     setEditingSessionId(null);
     if (!newTitle) return;
-
     try {
       const res = await fetch(`${BACKEND_URL}/sessoes/${id}`, {
         method: "PATCH",
@@ -349,14 +344,12 @@ export default function App() {
     }
   };
 
-  /* ===================== Limpar conversas (local) ===================== */
+  /* ===== Limpar conversas local ===== */
   const limparConversas = () => {
     setHistorico([]);
-    // Se quiser realmente limpar no backend, seria necessário implementar rota DELETE:
-    // DELETE /historico/:sessionId (não implementada ainda)
   };
 
-  /* ===================== Logout ===================== */
+  /* ===== Logout ===== */
   const logout = () => {
     try {
       localStorage.removeItem("token");
@@ -370,23 +363,152 @@ export default function App() {
     }
   };
 
+  /* ======= PESQUISA ======= */
+  const normalizedSessions = useMemo(
+    () => sessions.map(s => ({
+      ...s,
+      _tituloExibicao: s.titulo && s.titulo.trim() ? s.titulo : "(Sem título)"
+    })),
+    [sessions]
+  );
+  const filteredSessions = useMemo(() => {
+    const q = sessionSearch.trim().toLowerCase();
+    if (!q) return normalizedSessions;
+    return normalizedSessions.filter(s =>
+      s._tituloExibicao.toLowerCase().includes(q)
+    );
+  }, [sessionSearch, normalizedSessions]);
+
+  function escapeRegExp(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+  const highlightTitle = (title) => {
+    const q = sessionSearch.trim();
+    if (!q) return title;
+    const regex = new RegExp(`(${escapeRegExp(q)})`, "ig");
+    const parts = title.split(regex);
+    return parts.map((part, i) =>
+      regex.test(part) ? <mark key={i} className="hl">{part}</mark> : part
+    );
+  };
+  const clearSearch = () => {
+    setSessionSearch("");
+    searchInputRef.current?.focus();
+  };
+
+  /* ======= SELEÇÃO DE SESSÕES ======= */
+  const toggleSelectionMode = () => {
+    if (selectionMode) {
+      setSelectedSessions(new Set());
+    }
+    setSelectionMode(m => !m);
+  };
+  const toggleSelect = (id) => {
+    setSelectedSessions(prev => {
+      const ns = new Set(prev);
+      if (ns.has(id)) ns.delete(id);
+      else ns.add(id);
+      return ns;
+    });
+  };
+  const selectAllFiltered = () => {
+    setSelectedSessions(new Set(filteredSessions.map(s => s.id)));
+  };
+  const clearSelected = () => setSelectedSessions(new Set());
+  const isAllFilteredSelected =
+    filteredSessions.length > 0 &&
+    filteredSessions.every(s => selectedSessions.has(s.id));
+
+  const handleDeleteSelected = async () => {
+    if (selectedSessions.size === 0) return;
+    if (!window.confirm(`Apagar ${selectedSessions.size} conversa(s)? Isso não pode ser desfeito.`)) return;
+    setDeleting(true);
+    setDeleteFeedback("");
+    try {
+      // Deleta uma a uma (poderia otimizar com endpoint batch)
+      for (const id of selectedSessions) {
+        await fetch(`${BACKEND_URL}/sessoes/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: "Bearer " + token
+          }
+        }).catch(() => {});
+      }
+      // Atualiza lista
+      await fetchSessions();
+      // Se a sessão atual foi deletada, resetar:
+      if (selectedSessions.has(currentSessionId)) {
+        setCurrentSessionId(null);
+        setHistorico([]);
+      }
+      setSelectedSessions(new Set());
+      setDeleteFeedback("Conversas apagadas.");
+    } catch (err) {
+      console.error("Erro apagando sessões:", err);
+      setDeleteFeedback("Falha ao apagar algumas conversas.");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleDeleteSingle = async (e, id) => {
+    e.stopPropagation();
+    if (!window.confirm("Apagar esta conversa?")) return;
+    try {
+      await fetch(`${BACKEND_URL}/sessoes/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: "Bearer " + token }
+      });
+      if (id === currentSessionId) {
+        setCurrentSessionId(null);
+        setHistorico([]);
+      }
+      await fetchSessions();
+    } catch (err) {
+      console.error("Erro apagando conversa:", err);
+      setErrorMsg("Falha ao apagar conversa.");
+    }
+  };
+
   return (
     <div className="app">
       <aside className="sidebar">
         <div>
           <div className="logo">Neurocom</div>
-          
 
-          <input type="text" placeholder="Pesquisar" className="search" disabled />
+          <div className="search-wrapper">
+            <input
+              ref={searchInputRef}
+              type="text"
+              placeholder="Pesquisar chats..."
+              className="search"
+              value={sessionSearch}
+              onChange={(e) => setSessionSearch(e.target.value)}
+              aria-label="Pesquisar chats"
+            />
+            {sessionSearch && (
+              <button
+                type="button"
+                className="search-clear"
+                onClick={clearSearch}
+                aria-label="Limpar pesquisa"
+                title="Limpar"
+              >
+                ×
+              </button>
+            )}
+          </div>
+
+          {sessionSearch && (
+            <div className="search-feedback" aria-live="polite">
+              {filteredSessions.length === 0
+                ? "Nenhum resultado."
+                : `${filteredSessions.length} resultado${filteredSessions.length > 1 ? "s" : ""}`}
+            </div>
+          )}
 
           <nav className="menu" aria-label="Navegação">
             <a href="/sobre">Sobre</a>
-            <a
-              href="#"
-              onClick={(e) => { e.preventDefault(); limparConversas(); }}
-            >
-              Limpar conversas (local)
-            </a>
             <a
               href="#"
               onClick={(e) => {
@@ -418,11 +540,7 @@ export default function App() {
       <main className="main">
         <div className="content">
           <section className="chat-area" aria-label="Área de mensagens">
-            {loadingHistory && (
-              <div className="msg-bot">
-                Carregando histórico...
-              </div>
-            )}
+            {loadingHistory && <div className="msg-bot">Carregando histórico...</div>}
             {historico.map((msg, idx) => (
               <div
                 key={idx}
@@ -432,32 +550,81 @@ export default function App() {
               </div>
             ))}
             {isTyping && <div className="msg-bot">..{dots}</div>}
-            {errorMsg && (
-              <div className="msg-bot error">
-                {errorMsg}
-              </div>
-            )}
+            {errorMsg && <div className="msg-bot error">{errorMsg}</div>}
           </section>
 
           <aside className="chat-sidebar" aria-label="Lista de conversas">
-            <button className="new-chat" onClick={() => handleNewChat()}>
-              + Novo chat
-            </button>
+            <div className="sessions-toolbar">
+              <button className="new-chat" onClick={() => handleNewChat()} disabled={selectionMode}>
+                + Novo chat
+              </button>
+              <button
+                className="select-toggle"
+                onClick={toggleSelectionMode}
+                aria-pressed={selectionMode}
+              >
+                {selectionMode ? "Cancelar" : "Selecionar"}
+              </button>
+            </div>
+
+            {selectionMode && (
+              <div className="selection-actions">
+                <div className="selection-info">
+                  {selectedSessions.size > 0
+                    ? `${selectedSessions.size} selecionada${selectedSessions.size > 1 ? "s" : ""}`
+                    : "Nenhuma selecionada"}
+                </div>
+                <div className="selection-buttons">
+                  <button
+                    type="button"
+                    className="mini-btn"
+                    onClick={isAllFilteredSelected ? clearSelected : selectAllFiltered}
+                    disabled={filteredSessions.length === 0}
+                  >
+                    {isAllFilteredSelected ? "Limpar seleção" : "Selecionar tudo"}
+                  </button>
+                  <button
+                    type="button"
+                    className="mini-btn delete"
+                    disabled={selectedSessions.size === 0 || deleting}
+                    onClick={handleDeleteSelected}
+                  >
+                    {deleting ? "Apagando..." : "Apagar selecionadas"}
+                  </button>
+                </div>
+                {deleteFeedback && (
+                  <div className="delete-feedback" aria-live="polite">
+                    {deleteFeedback}
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="chat-title">
               {loadingSessions ? "Carregando..." : "Seus chats"}
             </div>
-            <ul className="chat-list">
-              {sessions.map(sessao => {
+            <ul className={`chat-list ${selectionMode ? "selection-mode" : ""}`}>
+              {filteredSessions.map(sessao => {
                 const active = sessao.id === currentSessionId;
+                const checked = selectedSessions.has(sessao.id);
                 return (
                   <li
                     key={sessao.id}
-                    className={active ? "active" : ""}
+                    className={`${active ? "active" : ""} ${checked ? "checked" : ""}`}
                     onClick={() => handleSelectSession(sessao.id)}
                     onDoubleClick={() => startRename(sessao)}
-                    title="Duplo clique para renomear"
-                    style={{ position: "relative" }}
+                    title={selectionMode ? "Clique para selecionar" : "Duplo clique para renomear"}
                   >
+                    {selectionMode && (
+                      <input
+                        type="checkbox"
+                        className="session-checkbox"
+                        checked={checked}
+                        onChange={() => toggleSelect(sessao.id)}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    )}
+
                     {editingSessionId === sessao.id ? (
                       <input
                         autoFocus
@@ -465,36 +632,36 @@ export default function App() {
                         onChange={(e) => setEditingTitleValue(e.target.value)}
                         onBlur={commitRename}
                         onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            commitRename();
-                          } else if (e.key === "Escape") {
-                            setEditingSessionId(null);
-                          }
+                          if (e.key === "Enter") commitRename();
+                          else if (e.key === "Escape") setEditingSessionId(null);
                         }}
-                        style={{
-                          width: "100%",
-                          fontSize: "0.8rem",
-                          borderRadius: "6px",
-                          border: "1px solid var(--border)",
-                          padding: "4px 6px"
-                        }}
+                        className="rename-input"
                       />
                     ) : (
-                      <>
-                        <span style={{ fontWeight: active ? 600 : 500 }}>
-                          {sessao.titulo
-                            ? sessao.titulo
-                            : "(Sem título)"}
-                        </span>
-                      </>
+                      <span
+                        className="session-title"
+                        style={{ fontWeight: active ? 600 : 500 }}
+                      >
+                        {highlightTitle(sessao._tituloExibicao)}
+                      </span>
                     )}
-                    {/* Pode adicionar data/hora depois */}
+
+                    {!selectionMode && (
+                      <button
+                        className="delete-session-btn"
+                        onClick={(e) => handleDeleteSingle(e, sessao.id)}
+                        aria-label="Apagar conversa"
+                        title="Apagar conversa"
+                      >
+                        🗑
+                      </button>
+                    )}
                   </li>
                 );
               })}
-              {sessions.length === 0 && !loadingSessions && (
+              {filteredSessions.length === 0 && !loadingSessions && (
                 <li style={{ opacity: 0.6 }}>
-                  Nenhum chat ainda.
+                  Nenhum chat encontrado.
                 </li>
               )}
             </ul>
@@ -578,18 +745,6 @@ export default function App() {
                     <option value="auto">Auto / Manual</option>
                     <option value="light">Claro</option>
                     <option value="dark">Escuro</option>
-                  </select>
-                </label>
-                <label className="settings-field">
-                  <span>Fonte</span>
-                  <select
-                    value={settings.fontScale}
-                    onChange={(e) => updateSetting("fontScale", e.target.value)}
-                  >
-                    <option value="90">90%</option>
-                    <option value="100">100%</option>
-                    <option value="110">110%</option>
-                    <option value="120">120%</option>
                   </select>
                 </label>
               </section>
