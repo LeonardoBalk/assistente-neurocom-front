@@ -562,6 +562,7 @@ useEffect(() => {
       </aside>
 
       <main className="main">
+        
         <div className="content">
           <section className="chat-area" aria-label="Área de mensagens">
             {loadingHistory && <div className="msg-bot">Carregando histórico...</div>}
