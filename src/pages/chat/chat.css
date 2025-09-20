@@ -926,3 +926,60 @@ a:hover { text-decoration: underline; }
   }
 }
 
+/* ======== MOBILE ======== */
+@media (max-width: 768px) {
+  /* Sidebar lateral some no mobile */
+  .chat-sidebar {
+    display: none;
+  }
+
+  /* Sidebar principal vira topo */
+  .sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+  }
+
+  /* Área principal ocupa a tela toda */
+  .main {
+    width: 100%;
+  }
+
+  /* Área do chat com menos padding */
+  .chat-area {
+    padding: 0.5rem;
+  }
+
+  /* Footer compacto */
+  .footer {
+    padding: 0.4rem;
+  }
+  .footer .input {
+    font-size: 1rem;
+  }
+  .footer .send-btn {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.9rem;
+  }
+}
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+  }
+
+  .chat-sidebar {
+    display: block;       /* não some */
+    width: 100%;          /* ocupa toda largura */
+    border-left: none;    
+    border-bottom: 1px solid #ddd;
+    height: auto;
+    max-height: 200px;    /* limita altura */
+    overflow-y: auto;     /* permite rolagem */
+  }
+
+  .chat-area {
+    flex: 1;
+    padding: 0.5rem;
+  }
+}
