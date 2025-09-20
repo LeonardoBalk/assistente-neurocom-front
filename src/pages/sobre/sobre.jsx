@@ -131,7 +131,7 @@ export default function Sobre() {
         <div className="bio">
           <figure className="portrait-card card reveal" style={{ ["--reveal-delay"]: "60ms" }}>
             <img
-              src="/public/sergio.jpeg"
+              src="https://i.imgur.com/p1sKSj1.jpeg"
               alt="Retrato profissional do Dr. Sérgio Spritzer"
               loading="lazy"
               width="640"

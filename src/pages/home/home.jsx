@@ -178,7 +178,7 @@ const Home = () => {
               </div>
             </div>
             <div className="doctor-avatar">
-              <img src="public/sergio1.png" alt="" />
+              <img src="https://i.imgur.com/iYVv0QW.png" alt="" />
             </div>
           </div>
         </div>
