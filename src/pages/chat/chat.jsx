@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import "./chat.css";
 import ReactMarkdown from "react-markdown";
 
+
 const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export default function App() {
   /* ===== Estados principais ===== */
+  // Estados novos
   const [mensagem, setMensagem] = useState("");
   const [historico, setHistorico] = useState([]);
   const [token, setToken] = useState("");
@@ -42,7 +44,20 @@ export default function App() {
     } catch {}
     return "light";
   };
-  const [theme, setTheme] = useState(getInitialTheme);
+  const [theme, setTheme] = useState(getInitialTheme());
+
+
+const [userInfo, setUserInfo] = useState(null);
+
+useEffect(() => {
+  try {
+    const raw = localStorage.getItem('userInfo');
+    if (raw) {
+      setUserInfo(JSON.parse(raw));
+    }
+  } catch {}
+}, []);
+  
   useEffect(() => {
     const root = document.documentElement;
     if (theme === "dark") root.classList.add("dark");
@@ -57,7 +72,7 @@ export default function App() {
         const p = JSON.parse(raw);
         return {
           displayName: p.displayName || "Nome Usuário",
-          email: p.email || "usuario@gmail.com",
+            email: p.email || "usuario@gmail.com",
           themePref: p.themePref || "auto",
           fontScale: p.fontScale || "100"
         };
@@ -137,7 +152,7 @@ export default function App() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: "usuario@teste.com", senha: "123456" })
           });
-            const data = await res.json();
+          const data = await res.json();
           if (data.token) {
             savedToken = data.token;
             localStorage.setItem("token", savedToken);
@@ -155,11 +170,6 @@ export default function App() {
   }, []);
 
   /* ===== Carregar sessões ===== */
-  useEffect(() => {
-    if (!token) return;
-    fetchSessions();
-  }, [token]);
-
   const fetchSessions = useCallback(async () => {
     if (!token) return;
     setLoadingSessions(true);
@@ -186,6 +196,11 @@ export default function App() {
       setLoadingSessions(false);
     }
   }, [token]);
+
+  useEffect(() => {
+    if (!token) return;
+    fetchSessions();
+  }, [token, fetchSessions]);
 
   /* ===== Histórico da sessão ativa ===== */
   useEffect(() => {
@@ -313,7 +328,7 @@ export default function App() {
 
   /* ===== Renomear sessão ===== */
   const startRename = (sessao) => {
-    if (selectionMode) return; // não renomeia em modo seleção
+    if (selectionMode) return;
     setEditingSessionId(sessao.id);
     setEditingTitleValue(sessao.titulo || "");
   };
@@ -344,7 +359,7 @@ export default function App() {
     }
   };
 
-  /* ===== Limpar conversas local ===== */
+  /* ===== Limpar conversas ===== */
   const limparConversas = () => {
     setHistorico([]);
   };
@@ -425,7 +440,6 @@ export default function App() {
     setDeleting(true);
     setDeleteFeedback("");
     try {
-      // Deleta uma a uma (poderia otimizar com endpoint batch)
       for (const id of selectedSessions) {
         await fetch(`${BACKEND_URL}/sessoes/${id}`, {
           method: "DELETE",
@@ -434,9 +448,7 @@ export default function App() {
           }
         }).catch(() => {});
       }
-      // Atualiza lista
       await fetchSessions();
-      // Se a sessão atual foi deletada, resetar:
       if (selectedSessions.has(currentSessionId)) {
         setCurrentSessionId(null);
         setHistorico([]);
@@ -474,8 +486,15 @@ export default function App() {
     <div className="app">
       <aside className="sidebar">
         <div>
-          <div className="logo">Neurocom</div>
+          {/* ===== Logo + texto ===== */}
+          
+  <img src="public/neurocom.png" alt="Neurocom" className="neurocom-logo" 
+  
+  />
+  
 
+
+          {/* ===== Pesquisa ===== */}
           <div className="search-wrapper">
             <input
               ref={searchInputRef}
@@ -499,16 +518,15 @@ export default function App() {
             )}
           </div>
 
-          {sessionSearch && (
-            <div className="search-feedback" aria-live="polite">
-              {filteredSessions.length === 0
-                ? "Nenhum resultado."
-                : `${filteredSessions.length} resultado${filteredSessions.length > 1 ? "s" : ""}`}
-            </div>
-          )}
+            {sessionSearch && (
+              <div className="search-feedback" aria-live="polite">
+                {filteredSessions.length === 0
+                  ? "Nenhum resultado."
+                  : `${filteredSessions.length} resultado${filteredSessions.length > 1 ? "s" : ""}`}
+              </div>
+            )}
 
           <nav className="menu" aria-label="Navegação">
-            <a href="/sobre">Sobre</a>
             <a
               href="#"
               onClick={(e) => {
@@ -518,7 +536,13 @@ export default function App() {
             >
               Configurações
             </a>
-            <a href="#" onClick={(e)=>{ e.preventDefault(); logout(); }}>Sair</a>
+            <a href="/sobre">Sobre</a>
+            <a
+              href="#"
+              onClick={(e)=>{ e.preventDefault(); logout(); }}
+            >
+              Sair
+            </a>
           </nav>
         </div>
 
@@ -530,9 +554,13 @@ export default function App() {
               className="avatar"
             />
             <div className="user-text">
-              <span className="user-name">{settings.displayName}</span>
-              <span className="user-email">{settings.email}</span>
-            </div>
+  <span className="user-name">
+    {userInfo?.nome || settings.displayName || 'Usuário'}
+  </span>
+  <span className="user-email">
+    {userInfo?.email || settings.email || 'sem-email'}
+  </span>
+</div>
           </div>
         </div>
       </aside>
@@ -555,13 +583,18 @@ export default function App() {
 
           <aside className="chat-sidebar" aria-label="Lista de conversas">
             <div className="sessions-toolbar">
-              <button className="new-chat" onClick={() => handleNewChat()} disabled={selectionMode}>
-                + Novo chat
+              <button
+                className="new-chat"
+                onClick={() => handleNewChat()}
+                disabled={selectionMode}
+              >
+                Novo chat
               </button>
               <button
-                className="select-toggle"
+                className="select-toggle subtle-btn"
                 onClick={toggleSelectionMode}
                 aria-pressed={selectionMode}
+                title={selectionMode ? "Sair do modo seleção" : "Selecionar vários"}
               >
                 {selectionMode ? "Cancelar" : "Selecionar"}
               </button>
@@ -581,7 +614,7 @@ export default function App() {
                     onClick={isAllFilteredSelected ? clearSelected : selectAllFiltered}
                     disabled={filteredSessions.length === 0}
                   >
-                    {isAllFilteredSelected ? "Limpar seleção" : "Selecionar tudo"}
+                    {isAllFilteredSelected ? "Limpar" : "Tudo"}
                   </button>
                   <button
                     type="button"
@@ -589,7 +622,7 @@ export default function App() {
                     disabled={selectedSessions.size === 0 || deleting}
                     onClick={handleDeleteSelected}
                   >
-                    {deleting ? "Apagando..." : "Apagar selecionadas"}
+                    {deleting ? "..." : "Apagar"}
                   </button>
                 </div>
                 {deleteFeedback && (
@@ -610,10 +643,14 @@ export default function App() {
                 return (
                   <li
                     key={sessao.id}
-                    className={`${active ? "active" : ""} ${checked ? "checked" : ""}`}
+                    className={`chat-item ${active ? "active" : ""} ${checked ? "checked" : ""}`}
                     onClick={() => handleSelectSession(sessao.id)}
                     onDoubleClick={() => startRename(sessao)}
-                    title={selectionMode ? "Clique para selecionar" : "Duplo clique para renomear"}
+                    title={
+                      selectionMode
+                        ? "Clique para selecionar"
+                        : "Duplo clique para renomear"
+                    }
                   >
                     {selectionMode && (
                       <input
@@ -625,42 +662,40 @@ export default function App() {
                       />
                     )}
 
-                    {editingSessionId === sessao.id ? (
-                      <input
-                        autoFocus
-                        value={editingTitleValue}
-                        onChange={(e) => setEditingTitleValue(e.target.value)}
-                        onBlur={commitRename}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") commitRename();
-                          else if (e.key === "Escape") setEditingSessionId(null);
-                        }}
-                        className="rename-input"
-                      />
-                    ) : (
-                      <span
-                        className="session-title"
-                        style={{ fontWeight: active ? 600 : 500 }}
-                      >
-                        {highlightTitle(sessao._tituloExibicao)}
-                      </span>
-                    )}
+                    <div className="chat-item-main">
+                      {editingSessionId === sessao.id ? (
+                        <input
+                          autoFocus
+                          value={editingTitleValue}
+                          onChange={(e) => setEditingTitleValue(e.target.value)}
+                          onBlur={commitRename}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") commitRename();
+                            else if (e.key === "Escape") setEditingSessionId(null);
+                          }}
+                          className="rename-input"
+                        />
+                      ) : (
+                        <span
+                          className="session-title"
+                          style={{ fontWeight: active ? 600 : 500 }}
+                        >
+                          {highlightTitle(sessao._tituloExibicao)}
+                        </span>
+                      )}
+                    </div>
 
+                    {/* Ações minimalistas (apenas quando não está em modo seleção) */}
                     {!selectionMode && (
-                      <button
-                        className="delete-session-btn"
-                        onClick={(e) => handleDeleteSingle(e, sessao.id)}
-                        aria-label="Apagar conversa"
-                        title="Apagar conversa"
-                      >
-                        🗑
-                      </button>
+                      <div className="chat-actions">
+                        
+                      </div>
                     )}
                   </li>
                 );
               })}
               {filteredSessions.length === 0 && !loadingSessions && (
-                <li style={{ opacity: 0.6 }}>
+                <li className="empty-state">
                   Nenhum chat encontrado.
                 </li>
               )}
@@ -679,7 +714,11 @@ export default function App() {
               if (e.key === "Enter") enviarMensagem();
             }}
           />
-          <button onClick={enviarMensagem} disabled={sending}>
+          <button
+            onClick={enviarMensagem}
+            disabled={sending || !mensagem.trim()}
+            className="send-btn"
+          >
             {sending ? "..." : "Enviar"}
           </button>
         </footer>

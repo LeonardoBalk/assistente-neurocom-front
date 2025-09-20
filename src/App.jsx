@@ -7,17 +7,17 @@ import Home from "./pages/home/home.jsx";
 import Cadastro from "./pages/cadastro/cadastro.jsx";
 import Sobre from "./pages/sobre/sobre.jsx";
 
-// 🔒 Rota protegida
+// Rota protegida
 function RotaProtegida({ children, logado }) {
   return logado ? children : <Navigate to="/login" replace />;
 }
 
-// 🌐 Rota pública
+// Rota pública
 function RotaPublica({ children, logado }) {
   return logado ? <Navigate to="/chat" replace /> : children;
 }
 
-// ✅ Função que valida o token
+// Função que valida o token
 function checkAuth() {
   const token = localStorage.getItem("token");
   if (!token) return false;
