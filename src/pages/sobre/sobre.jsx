@@ -36,7 +36,6 @@ export default function Sobre() {
               loading="eager"
             />
           </div>
-         
         </div>
         <div className="sobre-hero-inner reveal" style={{ ["--reveal-delay"]: "60ms" }}>
           <h1 className="shine">
@@ -52,7 +51,6 @@ export default function Sobre() {
             <a className="btn-primary" href="https://www.neurocom.com.br/" target="_blank" rel="noopener noreferrer">
               Visitar Neurocom
             </a>
-
           </div>
         </div>
         {/* Navegação local em pílulas */}
@@ -169,9 +167,16 @@ export default function Sobre() {
               <div>
                 <h4>Credenciais</h4>
                 <ul>
-                  <li>Formação: [preencher]</li>
-                  <li>Registro (CRP): [preencher, se aplicável]</li>
-                  <li>Palestras/publicações: [opcional]</li>
+                  <li>Formação em Medicina pela UFRGS - Porto Alegre</li>
+                  <li>Especialização em Neurologia Clínica pela Fundação Faculdade Federal de Ciências Médicas de Porto Alegre</li>
+                  <li>Pós-graduação em Desenvolvimento da Inteligência Humana no Instituto de Psicologia da UFRGS</li>
+                  <li>Mestrado em Distúrbios da Comunicação Humana pela PUC de São Paulo (1989)</li>
+                  <li>Atuação como professor adjunto no Instituto de Filosofia e Ciências Humanas</li>
+                  <li>Formação psicanalítica; membro fundador da Associação Psicanalítica de Porto Alegre</li>
+                  <li>Master Trainer em Programação Neurolinguística e Hipnose Relacional<br />— estudos avançados na NLP University (UCLA)</li>
+                  <li>Palestrante principal no primeiro Congresso Brasileiro de Programação Neurolinguística (Universidade São Camilo de São Paulo)</li>
+                  <li>Pesquisador pioneiro na fenomenologia das interações humanas</li>
+                  <li>Idealizador e mantenedor da Neurocom</li>
                 </ul>
               </div>
             </div>
@@ -233,48 +238,6 @@ export default function Sobre() {
         </div>
       </section>
 
-      {/* Galeria de imagens/GIFs */}
-      <section id="galeria" className="sobre-section">
-        <div className="section-header reveal">
-          <h2>Da prática ao diálogo</h2>
-          <p className="section-sub">
-            Imagens institucionais e cenas do nosso atendimento — presencial e digital.
-          </p>
-        </div>
-        <div className="gallery">
-          <figure className="figure card reveal hover-lift" style={{ ["--reveal-delay"]: "60ms" }}>
-            <img
-              src="/images/atendimento.jpg"
-              alt="Atendimento em ambiente acolhedor"
-              loading="lazy"
-              width="1600"
-              height="1066"
-            />
-            <figcaption>Atendimento com foco no diálogo qualificado</figcaption>
-          </figure>
-          <figure className="figure card reveal hover-lift" style={{ ["--reveal-delay"]: "100ms" }}>
-            <img
-              src="/images/ambiente.jpg"
-              alt="Ambiente preparado para conversas"
-              loading="lazy"
-              width="1600"
-              height="1066"
-            />
-            <figcaption>Ambientes para conversas que avançam</figcaption>
-          </figure>
-          <figure className="figure card reveal hover-lift" style={{ ["--reveal-delay"]: "140ms" }}>
-            <img
-              src="/images/ia-dialogo.gif"
-              alt="IA Neurocom em diálogo"
-              loading="lazy"
-              width="800"
-              height="600"
-            />
-            <figcaption>Assistente Neurocom em ação (GIF ilustrativo)</figcaption>
-          </figure>
-        </div>
-      </section>
-
       {/* Contato */}
       <section id="contato" className="sobre-section final-cta">
         <div className="cta-card card reveal">
@@ -295,7 +258,7 @@ export default function Sobre() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Página de contato (EN)
+              Página de contato
             </a>
           </div>
         </div>
