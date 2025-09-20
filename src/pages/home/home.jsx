@@ -49,7 +49,7 @@ const Home = () => {
           <a className="brand" href="/" aria-label="Neurocom - Página inicial">
             <img
               className="brand-logo"
-              src="/public/neurocom.png"
+              src="https://i.imgur.com/knLE8C5.png"
               alt="Neurocom"
               width="120"
               height="28"
@@ -89,7 +89,7 @@ const Home = () => {
                 <span className="" aria-hidden="true" />
                 <img
                   className="brand-logo-hero"
-                  src="/public/neurocom.png"
+                  src="https://i.imgur.com/knLE8C5.png"
                   alt="Neurocom"
                   width="220"
                   height="56"
@@ -178,7 +178,7 @@ const Home = () => {
               </div>
             </div>
             <div className="doctor-avatar">
-              <img src="public/sergio1.avif" alt="" />
+              <img src="public/sergio1.png" alt="" />
             </div>
           </div>
         </div>

@@ -137,7 +137,7 @@ function Cadastro({ setLogado }) {
       <form className="form" onSubmit={(e) => e.preventDefault()} noValidate>
         <div className="logo">
           <img
-            src="/public/neurocom.png"
+            src="https://i.imgur.com/knLE8C5.png"
             alt="NeuroCom"
             width={120}
             height={120}

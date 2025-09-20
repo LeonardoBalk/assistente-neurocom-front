@@ -29,7 +29,7 @@ export default function Sobre() {
             <span className="" aria-hidden="true" />
             <img
               className="brand-logo-hero"
-              src="/public/neurocom.png"
+              src="https://i.imgur.com/knLE8C5.png"
               alt="Neurocom"
               width="180"
               height="56"

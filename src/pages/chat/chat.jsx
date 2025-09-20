@@ -487,12 +487,8 @@ useEffect(() => {
       <aside className="sidebar">
         <div>
           {/* ===== Logo + texto ===== */}
-          
-  <img src="public/neurocom.png" alt="Neurocom" className="neurocom-logo" 
-  
-  />
-  
 
+  <img src="https://i.imgur.com/knLE8C5.png" alt="Neurocom" className="neurocom-logo" />
 
           {/* ===== Pesquisa ===== */}
           <div className="search-wrapper">

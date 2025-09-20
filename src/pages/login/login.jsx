@@ -132,7 +132,7 @@ function Login({ setLogado }) {
       <form className="form" onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
         <div className="logo" aria-hidden="true">
           <img
-            src="/public/neurocom.png"
+            src="https://i.imgur.com/knLE8C5.png"
             alt="NeuroCom"
             loading="lazy"
             width={140}
