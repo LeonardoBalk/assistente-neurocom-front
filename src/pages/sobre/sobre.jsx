@@ -201,7 +201,7 @@ export default function Sobre() {
               <span className="dot green" />
             </div>
             <div className="browser-body">
-              <img src="https://imgur.com/6x54Zl0" alt="IA Neurocom em ação" className="browser-gif" />
+              <img src="https://i.imgur.com/6x54Zl0.png" alt="IA Neurocom em ação" className="browser-gif" />
              
             </div>
           </div>
