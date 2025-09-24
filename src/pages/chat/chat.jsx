@@ -532,7 +532,7 @@ useEffect(() => {
             >
               Configurações
             </a>
-            <a href="/sobre">Sobre</a>
+            <a target="_blank" href="/sobre">Sobre</a>
             <a
               href="#"
               onClick={(e)=>{ e.preventDefault(); logout(); }}

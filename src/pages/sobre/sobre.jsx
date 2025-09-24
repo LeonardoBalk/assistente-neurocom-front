@@ -193,34 +193,6 @@ export default function Sobre() {
           </p>
         </div>
         <div className="cols-2 media-feature">
-          <article className="card card-soft reveal" style={{ ["--reveal-delay"]: "60ms" }}>
-            <h3>Principais recursos</h3>
-            <ul className="feature-list">
-              <li>Interface intuitiva e segura</li>
-              <li>Histórico, Markdown e citações</li>
-              <li>Design responsivo e acessível</li>
-              <li>Configurações personalizadas</li>
-              <li>Pronto para integrar APIs/LLMs</li>
-            </ul>
-            <div className="sobre-cta">
-              <a
-                className="btn-primary"
-                href="https://www.neurocom.com.br/cadastre-se"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Solicite demonstração
-              </a>
-              <a
-                className="btn-outline"
-                href="https://www.neurocom.com.br/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Conheça a Neurocom
-              </a>
-            </div>
-          </article>
           {/* Mock visual estilo “browser card” + GIF da IA */}
           <div className="browser-mock card reveal hover-lift" style={{ ["--reveal-delay"]: "120ms" }}>
             <div className="browser-topbar">
@@ -229,10 +201,8 @@ export default function Sobre() {
               <span className="dot green" />
             </div>
             <div className="browser-body">
-              <img src="/images/conversa-ia.gif" alt="IA Neurocom em ação" className="browser-gif" />
-              <div className="bubble left" />
-              <div className="bubble right" />
-              <div className="input-ghost shimmer" />
+              <img src="/public/chat.png" alt="IA Neurocom em ação" className="browser-gif" />
+             
             </div>
           </div>
         </div>
