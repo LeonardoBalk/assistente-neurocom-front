@@ -280,7 +280,7 @@ export default function App() {
   }, [isTyping]);
 
   /* ======= Posição dialógica (TU / ELE / NOS) ======= */
-  const POSICOES = ["TU", "ELE", "NOS"];
+  const POSICOES = ["TU", "ELE", "NÓS"];
   const [posicao, setPosicao] = useState("TU");
 
   /* ======= Scroll & focus helpers ======= */
