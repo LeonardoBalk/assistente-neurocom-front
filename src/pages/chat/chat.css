@@ -1099,3 +1099,108 @@ main.main { min-width: 0; overflow: hidden; display: flex; flex-direction: colum
 
 /* detalhes uteis */
 .chat-msg-row { min-width: 0; word-wrap: break-word; overflow-wrap: anywhere; }
+
+/* ===== remover scroll lateral e deixar scrollbars discretos (override) ===== */
+
+/* garantia global contra overflow horizontal */
+html, body, .app.modern-shell { overflow-x: hidden; }
+
+/* travar overflow horizontal no painel de sessoes (aba de novo chat) e containers principais */
+.modern-sessions,
+.chat-list.modern,
+.left-nav,
+.content.modern-layout,
+.modern-chat {
+  overflow-x: hidden;
+}
+
+/* garantir que itens internos nao forcem largura maior que o container */
+.chat-list.modern .chat-item,
+.chat-item .chat-item-main,
+.session-title {
+  min-width: 0;
+}
+.session-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; /* comportamento tipo chatgpt */
+}
+
+/* reservar espaco do trilho para evitar pulo de layout quando o scroll aparece */
+.modern-chat,
+.modern-sessions,
+.chat-list.modern {
+  scrollbar-gutter: stable both-edges;
+}
+
+/* scrollbars discretos (override dos globais) */
+.modern-chat,
+.modern-sessions,
+.chat-list.modern {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, hsl(var(--medical-blue)), transparent 78%) transparent;
+}
+
+/* webkit: finos, com baixa opacidade e mais visiveis no hover */
+.modern-chat::-webkit-scrollbar,
+.modern-sessions::-webkit-scrollbar,
+.chat-list.modern::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.modern-chat::-webkit-scrollbar-track,
+.modern-sessions::-webkit-scrollbar-track,
+.chat-list.modern::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modern-chat::-webkit-scrollbar-thumb,
+.modern-sessions::-webkit-scrollbar-thumb,
+.chat-list.modern::-webkit-scrollbar-thumb {
+  background-color: color-mix(in oklab, hsl(var(--medical-blue)), transparent 78%);
+  border-radius: 999px;
+  border: 2px solid transparent; /* cria respiro para parecer mais fino */
+}
+
+/* aumentar sutilmente a visibilidade no hover do container */
+.modern-chat:hover::-webkit-scrollbar-thumb,
+.modern-sessions:hover::-webkit-scrollbar-thumb,
+.chat-list.modern:hover::-webkit-scrollbar-thumb {
+  background-color: color-mix(in oklab, hsl(var(--medical-blue)), transparent 62%);
+}
+
+/* dark: um pouco mais de contraste para acessibilidade */
+.dark .modern-chat,
+.dark .modern-sessions,
+.dark .chat-list.modern {
+  scrollbar-color: color-mix(in oklab, hsl(var(--medical-blue)), white 6%) transparent;
+}
+.dark .modern-chat::-webkit-scrollbar-thumb,
+.dark .modern-sessions::-webkit-scrollbar-thumb,
+.dark .chat-list.modern::-webkit-scrollbar-thumb {
+  background-color: color-mix(in oklab, hsl(var(--medical-blue)), transparent 68%);
+}
+.dark .modern-chat:hover::-webkit-scrollbar-thumb,
+.dark .modern-sessions:hover::-webkit-scrollbar-thumb,
+.dark .chat-list.modern:hover::-webkit-scrollbar-thumb {
+  background-color: color-mix(in oklab, hsl(var(--medical-blue)), transparent 54%);
+}
+
+/* evitar que sombras/bordas empurrem alem do viewport em telas menores */
+@media (max-width: 1100px) {
+  .modern-sessions {
+    max-width: calc(100vw - 1.8rem);
+    box-sizing: border-box;
+  }
+}
+
+/* reduzir ainda mais em telas pequenas */
+@media (max-width: 600px) {
+  .modern-chat::-webkit-scrollbar,
+  .modern-sessions::-webkit-scrollbar,
+  .chat-list.modern::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+}
