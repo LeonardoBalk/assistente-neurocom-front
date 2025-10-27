@@ -279,8 +279,7 @@ export default function App() {
     return () => clearInterval(interval);
   }, [isTyping]);
 
-  /* ======= Posição dialógica (TU / ELE / NOS) ======= */
-  const POSICOES = ["TU", "ELE", "NÓS"];
+  /* ======= Posição dialógica (detecção automática; só exibição) ======= */
   const [posicao, setPosicao] = useState("TU");
 
   /* ======= Scroll & focus helpers ======= */
@@ -337,15 +336,14 @@ export default function App() {
         },
         body: JSON.stringify({
           mensagem: mensagemAtual,
-          sessionId: currentSessionId,
-          user_position: posicao
+          sessionId: currentSessionId
         })
       });
       const data = await res.json();
       if (data.erro) throw new Error(data.erro);
 
-      if (data.user_position && POSICOES.includes(data.user_position)) {
-        setPosicao(data.user_position);
+      if (typeof data.user_position === "string") {
+        setPosicao(data.user_position.toUpperCase());
       }
 
       if (data.sessionId && data.sessionId !== currentSessionId) {
@@ -813,9 +811,6 @@ export default function App() {
                       <span className="role">
                         {isUser ? "Você" : "Assistente"}
                       </span>
-                      {!isUser && (
-                        <span className="position-tag">{posicao}</span>
-                      )}
                       <div className="msg-actions">
                         <button
                           className="icon-btn"
@@ -852,7 +847,6 @@ export default function App() {
                 <div className="msg-bubble typing">
                   <div className="msg-meta">
                     <span className="role">Assistente</span>
-                    <span className="position-tag">{posicao}</span>
                   </div>
                   <div className="msg-content">
                     <span className="typing-dots">
@@ -1048,28 +1042,6 @@ export default function App() {
         {/* ============ FOOTER INPUT AREA ============ */}
         <footer className="footer modern-footer">
           <div className="footer-inner">
-            {/* Posição dialógica */}
-            <div
-              className="position-selector"
-              role="radiogroup"
-              aria-label="Posição dialógica"
-            >
-              {POSICOES.map((p) => (
-                <button
-                  key={p}
-                  type="button"
-                  role="radio"
-                  aria-checked={p === posicao}
-                  aria-label={`Resposta no modo ${p}`}
-                  onClick={() => setPosicao(p)}
-                  className={`pos-btn ${p === posicao ? "active" : ""}`}
-                  disabled={sending || isTyping}
-                >
-                  {p}
-                </button>
-              ))}
-            </div>
-
             <div className="input-wrapper">
               <textarea
                 ref={textareaRef}
