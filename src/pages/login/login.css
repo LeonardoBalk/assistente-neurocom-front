@@ -1,0 +1,533 @@
+
+.container-login {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem 1.25rem;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(900px 480px at -10% -10%, hsl(var(--medical-green) / 0.10), transparent 60%),
+    radial-gradient(900px 480px at 110% -10%, hsl(var(--medical-blue) / 0.10), transparent 60%);
+}
+
+/* Ornamentos suaves no fundo */
+.container-login::before,
+.container-login::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  inset: auto auto 10% -10%;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(60% 60% at 50% 50%, hsl(var(--medical-blue) / 0.18), transparent 60%);
+  filter: blur(40px);
+  opacity: 0.6;
+  transform: rotate(8deg);
+}
+.container-login::after {
+  inset: -12% -8% auto auto;
+  width: 460px;
+  height: 460px;
+  background: radial-gradient(60% 60% at 50% 50%, hsl(var(--medical-green) / 0.18), transparent 60%);
+  transform: rotate(-10deg);
+}
+
+/* Cartão do formulário */
+.form {
+  width: min(440px, 100%);
+  background: var(--glass);
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius) * 1.2);
+  padding: 1.5rem;
+  box-shadow: 0 24px 48px -24px hsl(var(--medical-blue) / 0.35), var(--shadow-medical);
+  backdrop-filter: saturate(140%) blur(10px);
+  -webkit-backdrop-filter: saturate(140%) blur(10px);
+  position: relative;
+  animation: login-fade-in 0.45s ease-out both;
+}
+
+/* Sutil “halo” de destaque do cartão */
+.form::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, hsl(var(--medical-blue) / 0.10), transparent 40%) border-box;
+  mask:
+    linear-gradient(#000, #000) padding-box,
+    linear-gradient(#000, #000);
+  -webkit-mask:
+    linear-gradient(#000, #000) padding-box,
+    linear-gradient(#000, #000);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  border: 1px solid transparent;
+}
+
+/* Título */
+.title {
+  margin: 0 0 1rem 0;
+  font-size: clamp(1.6rem, 2.6vw, 2rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  background: linear-gradient(90deg, hsl(var(--medical-green)), hsl(var(--medical-blue)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-align: center;
+}
+
+/* Campos */
+.input {
+  appearance: none;
+  width: 100%;
+  height: 52px;
+  padding: 0 0.95rem;
+  margin: 0.4rem 0;
+  border-radius: calc(var(--radius) * 0.9);
+  border: 1px solid hsl(var(--input));
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
+  font-size: 0.98rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+  box-shadow: inset 0 -1px 0 hsl(var(--border) / 0.5);
+}
+.input::placeholder {
+  color: hsl(var(--muted-foreground) / 0.9);
+}
+.input:hover {
+  border-color: hsl(var(--medical-blue) / 0.5);
+}
+.input:focus {
+  outline: none;
+  border-color: hsl(var(--primary));
+  box-shadow:
+    0 0 0 3px hsl(var(--primary) / 0.15),
+    0 10px 24px -16px hsl(var(--medical-blue) / 0.35);
+}
+
+/* Botões */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  height: 52px;
+  margin-top: 0.8rem;
+  border-radius: calc(var(--radius) * 0.95);
+  border: 1px solid hsl(var(--medical-blue) / 0.25);
+  background: linear-gradient(135deg, hsl(var(--medical-green)), hsl(var(--medical-blue)));
+  color: hsl(var(--primary-foreground));
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.2s ease, filter 0.2s ease, background 0.2s ease;
+  box-shadow: 0 12px 32px -12px hsl(var(--medical-blue) / 0.35);
+}
+.button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 40px -14px hsl(var(--medical-blue) / 0.45);
+  filter: brightness(1.03);
+}
+.button:active {
+  transform: translateY(0);
+  box-shadow: 0 8px 22px -14px hsl(var(--medical-blue) / 0.4);
+}
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Estilo opcional para botão “Google” se usar uma classe dedicada
+   (observação: estilos inline no JSX têm precedência) */
+.button-google {
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 8px 26px -16px hsl(var(--medical-blue) / 0.3);
+}
+.button-google:hover {
+  background: hsl(var(--secondary));
+}
+
+/* Ícone dentro do botão (ex.: Google) */
+.button img {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  object-fit: contain;
+}
+
+/* Mensagens de erro/sucesso (use se optar por classe em vez de inline) */
+.form .error {
+  color: hsl(var(--destructive));
+  font-size: 0.95rem;
+  margin-top: 0.65rem;
+}
+.form .success {
+  color: hsl(var(--medical-green));
+  font-size: 0.95rem;
+  margin-top: 0.65rem;
+}
+
+/* Rodapé do formulário (criar conta) */
+.conta {
+  margin-top: 1rem;
+  text-align: center;
+  color: hsl(var(--muted-foreground));
+  font-size: 0.98rem;
+}
+.logar {
+  color: hsl(var(--foreground));
+  text-decoration: none;
+  font-weight: 700;
+  margin-left: 0.25rem;
+  background: linear-gradient(90deg, hsl(var(--medical-green)), hsl(var(--medical-blue)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  position: relative;
+}
+.logar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 2px;
+  background: linear-gradient(90deg, hsl(var(--medical-green)), hsl(var(--medical-blue)));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease;
+}
+.logar:hover::after {
+  transform: scaleX(1);
+}
+
+/* Estados de acessibilidade */
+.button:focus-visible,
+.input:focus-visible,
+.logar:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 3px;
+  border-radius: calc(var(--radius) / 2);
+}
+
+/* Animação de entrada */
+@keyframes login-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.996);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 560px) {
+  .form {
+    padding: 1.1rem;
+    border-radius: calc(var(--radius) * 1.05);
+  }
+  .title {
+    font-size: clamp(1.45rem, 5vw, 1.75rem);
+  }
+  .input,
+  .button {
+    height: 50px;
+  }
+}
+
+/* Modo escuro – aproveita tokens .dark já definidos globalmente */
+.dark .form {
+  background: var(--glass-dark);
+  box-shadow: 0 24px 48px -24px hsl(var(--medical-blue) / 0.45), var(--shadow-medical);
+}
+.dark .button-google {
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--border));
+}
+
+/* --- Botão Google (estilo aprimorado, acessível e consistente) --- */
+.button.button-google {
+  background: #fff;
+  color: #3c4043; /* Google gray */
+  border: 1px solid #dadce0; /* Google border */
+  border-radius: calc(var(--radius) * 0.95);
+  height: 52px;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow:
+    0 1px 2px rgba(60, 64, 67, 0.3),
+    0 1px 3px 1px rgba(60, 64, 67, 0.15);
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    filter 0.2s ease;
+}
+
+.button.button-google:hover {
+  border-color: #c7c9cc;
+  box-shadow:
+    0 2px 6px rgba(60, 64, 67, 0.2),
+    0 4px 10px rgba(60, 64, 67, 0.12);
+  transform: translateY(-1px);
+}
+
+.button.button-google:active {
+  transform: translateY(0);
+  box-shadow:
+    0 1px 3px rgba(60, 64, 67, 0.25),
+    0 2px 6px rgba(60, 64, 67, 0.16);
+  filter: brightness(0.98);
+}
+
+.button.button-google:focus-visible {
+  outline: 2px solid #1a73e8; /* Google Blue focus */
+  outline-offset: 3px;
+  box-shadow:
+    0 0 0 3px rgba(26, 115, 232, 0.2),
+    0 2px 6px rgba(60, 64, 67, 0.2);
+}
+
+.button.button-google:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  filter: none;
+  transform: none;
+}
+
+.button.button-google .g-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  object-fit: contain;
+  flex: 0 0 18px;
+  margin-right: 2px;
+}
+
+/* Modo escuro: mantém branco por diretriz de marca, melhora contraste do texto */
+.dark .button.button-google {
+  background: #ffffff;
+  color: #1f1f1f;
+  border-color: #dadce0;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.35),
+    0 1px 3px 1px rgba(0, 0, 0, 0.25);
+}
+.dark .button.button-google:hover {
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.35),
+    0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.container-login {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem 1rem;
+  background: linear-gradient(hsl(var(--background)), hsl(var(--background)));
+}
+
+.form {
+  width: min(420px, 100%);
+  background: hsl(var(--surface));
+  padding: 1.75rem 1.5rem 2rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  display: grid;
+  gap: 1.2rem;
+  animation: fadeIn 0.4s var(--ease);
+}
+
+.title {
+  margin: 0 0 .5rem;
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  color: hsl(var(--foreground));
+  text-align: center;
+}
+
+.subtitle {
+  margin: 0;
+  text-align: center;
+  font-size: var(--text-sm);
+  color: hsl(var(--foreground-soft));
+}
+
+.input {
+  width: 100%;
+  height: 48px;
+  border-radius: var(--radius-md);
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--surface-alt));
+  padding: 0 0.9rem;
+  font-size: var(--text-sm);
+  color: hsl(var(--foreground));
+  transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+  outline: none;
+}
+.input::placeholder { color: hsl(var(--foreground-faint)); }
+.input:focus {
+  border-color: hsl(var(--accent));
+  background: hsl(var(--surface));
+  box-shadow: 0 0 0 3px hsl(var(--accent) / 0.25);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: .5rem;
+}
+
+button.primary {
+  height: 48px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--gradient-accent);
+  color: hsl(var(--inverted));
+  font-weight: 600;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: filter var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+}
+button.primary:hover {
+  filter: brightness(1.06);
+  box-shadow: var(--shadow-lg);
+}
+button.primary:active {
+  filter: brightness(0.94);
+}
+
+.link-inline {
+  text-align: center;
+  font-size: var(--text-xs);
+  color: hsl(var(--foreground-soft));
+}
+.link-inline a {
+  color: hsl(var(--accent));
+  text-decoration: none;
+  font-weight: 500;
+}
+.link-inline a:hover { text-decoration: underline; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Logo no formulário de login --- */
+.logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.1rem;
+  /* Se quiser um leve brilho: */
+  /* filter: drop-shadow(0 4px 12px hsl(var(--medical-blue) / 0.25)); */
+}
+
+.logo img {
+  width: 120px;
+  height: auto;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+  animation: logo-fade-in 0.6s ease;
+  /* Suave adaptação em dark mode */
+  transition: filter 0.3s ease;
+}
+
+.dark .logo img {
+  /* Se tiver versão clara, você pode trocar a fonte: content via <source> ou conditional */
+  filter: brightness(1.05) contrast(1.05);
+}
+
+@keyframes logo-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Estilo do botão Google (mantém o markup atual) */
+.button.button-google {
+  background-color: #ffffff;
+  color: #3c4043;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 16px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow:
+    0 1px 2px rgba(60, 64, 67, 0.3),
+    0 1px 3px 1px rgba(60, 64, 67, 0.15);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.05s ease;
+}
+
+.button.button-google:hover {
+  border-color: #d2e3fc;
+  box-shadow:
+    0 2px 4px rgba(60, 64, 67, 0.3),
+    0 2px 6px 2px rgba(60, 64, 67, 0.15);
+}
+
+.button.button-google:active {
+  transform: translateY(0.5px);
+  box-shadow:
+    0 1px 2px rgba(60, 64, 67, 0.2),
+    0 1px 3px 1px rgba(60, 64, 67, 0.1);
+}
+
+.button.button-google:focus-visible {
+  outline: 3px solid #1a73e8;
+  outline-offset: 2px;
+}
+
+/* Ícone "G" alinhado como no botão antigo */
+.button.button-google .g-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  margin-right: 8px;
+  flex: 0 0 auto;
+  vertical-align: middle;
+}
+
+/* Estado desabilitado coerente */
+.button.button-google[disabled],
+.button.button-google:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
