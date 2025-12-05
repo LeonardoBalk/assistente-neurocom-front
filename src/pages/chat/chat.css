@@ -1206,3 +1206,21 @@ html, body, .app.modern-shell { overflow-x: hidden; }
     height: 5px;
   }
 }
+/* =========================================================
+   typewriter effect
+   ========================================================= */
+.typewriter-container {
+  display: inline;
+}
+.typewriter-cursor {
+  display: inline-block;
+  color: hsl(var(--medical-blue));
+  font-weight: 400;
+  animation: blinkCursor 0.8s infinite;
+  margin-left: 2px;
+  font-size: 0.9em;
+}
+@keyframes blinkCursor {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}

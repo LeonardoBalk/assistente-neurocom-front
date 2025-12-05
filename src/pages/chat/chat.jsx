@@ -1,4 +1,4 @@
-import React, {
+﻿import React, {
   useState,
   useEffect,
   useRef,
@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import "./chat.css";
 import ReactMarkdown from "react-markdown";
+import TypewriterText from "./TypewriterText";
 
 const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -23,6 +24,7 @@ export default function App() {
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [sending, setSending] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [typingMessageIdx, setTypingMessageIdx] = useState(null);
 
   /* Renomear sessão */
   const [editingSessionId, setEditingSessionId] = useState(null);
@@ -355,7 +357,10 @@ export default function App() {
         remetente: "bot",
         texto: data.resposta || "(Sem resposta)"
       };
-      setHistorico((prev) => [...prev, botMsg]);
+      setHistorico((prev) => {
+          setTypingMessageIdx(prev.length);
+          return [...prev, botMsg];
+        });
     } catch (err) {
       console.error("Erro no chat-rag:", err);
       setErrorMsg("Erro ao enviar mensagem.");
@@ -363,7 +368,10 @@ export default function App() {
         remetente: "bot",
         texto: "Erro ao processar a pergunta."
       };
-      setHistorico((prev) => [...prev, botMsg]);
+      setHistorico((prev) => {
+          setTypingMessageIdx(prev.length);
+          return [...prev, botMsg];
+        });
     } finally {
       setIsTyping(false);
       setDots("");
@@ -838,7 +846,15 @@ export default function App() {
                       </div>
                     </div>
                     <div className="msg-content">
-                      <ReactMarkdown>{msg.texto}</ReactMarkdown>
+                      {!isUser && idx === historico.length - 1 && typingMessageIdx === idx ? (
+                        <TypewriterText 
+                          text={msg.texto} 
+                          speed={8}
+                          onComplete={() => setTypingMessageIdx(null)}
+                        />
+                      ) : (
+                        <ReactMarkdown>{msg.texto}</ReactMarkdown>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1199,3 +1215,6 @@ Notas de adaptação de estilo (sem CSS aqui):
 - Adicionar media queries para reorganizar layout mobile.
 - Garantir scroll interno em .chat-area e sticky header/footer.
 */
+
+
+
