@@ -26,6 +26,11 @@ export default function App() {
   const [errorMsg, setErrorMsg] = useState("");
   const [typingMessageIdx, setTypingMessageIdx] = useState(null);
 
+  /* Estados para Agentes Noesis */
+  const [agents, setAgents] = useState([]);
+  const [selectedAgent, setSelectedAgent] = useState(null);
+  const [loadingAgents, setLoadingAgents] = useState(false);
+
   /* Renomear sessão */
   const [editingSessionId, setEditingSessionId] = useState(null);
   const [editingTitleValue, setEditingTitleValue] = useState("");
@@ -238,6 +243,36 @@ export default function App() {
     fetchSessions();
   }, [token, fetchSessions]);
 
+  /* ======= Carregar Agentes Noesis ======= */
+  useEffect(() => {
+    const fetchAgents = async () => {
+      setLoadingAgents(true);
+      try {
+        const res = await fetch(`${BACKEND_URL}/chat/agents`);
+        const data = await res.json();
+        if (data.agents) {
+          setAgents(data.agents);
+        }
+      } catch (err) {
+        console.error("Erro carregando agentes:", err);
+      } finally {
+        setLoadingAgents(false);
+      }
+    };
+    fetchAgents();
+  }, []);
+
+  /* Handler para selecionar agente */
+  const handleSelectAgent = (agent) => {
+    setSelectedAgent(agent);
+  };
+
+  /* Handler para criar novo chat e selecionar agente */
+  const handleStartWithAgent = async (agent) => {
+    setSelectedAgent(agent);
+    await handleNewChat();
+  };
+
   /* ======= Histórico da sessão ativa ======= */
   useEffect(() => {
     if (!token || !currentSessionId) return;
@@ -338,7 +373,8 @@ export default function App() {
         },
         body: JSON.stringify({
           mensagem: mensagemAtual,
-          sessionId: currentSessionId
+          sessionId: currentSessionId,
+          agentId: selectedAgent?.id || null
         })
       });
       const data = await res.json();
@@ -358,9 +394,9 @@ export default function App() {
         texto: data.resposta || "(Sem resposta)"
       };
       setHistorico((prev) => {
-          setTypingMessageIdx(prev.length);
-          return [...prev, botMsg];
-        });
+        setTypingMessageIdx(prev.length);
+        return [...prev, botMsg];
+      });
     } catch (err) {
       console.error("Erro no chat-rag:", err);
       setErrorMsg("Erro ao enviar mensagem.");
@@ -369,9 +405,9 @@ export default function App() {
         texto: "Erro ao processar a pergunta."
       };
       setHistorico((prev) => {
-          setTypingMessageIdx(prev.length);
-          return [...prev, botMsg];
-        });
+        setTypingMessageIdx(prev.length);
+        return [...prev, botMsg];
+      });
     } finally {
       setIsTyping(false);
       setDots("");
@@ -804,6 +840,80 @@ export default function App() {
               <div className="msg-system">Carregando histórico...</div>
             )}
 
+            {/* Tela de boas-vindas IA Noesis */}
+            {!loadingHistory && historico.length === 0 && (
+              <div className="welcome-noesis">
+                <div className="noesis-avatar">
+                  <img
+                    src="https://i.imgur.com/lvJTfiM.png"
+                    alt="IA Noesis"
+                    className="noesis-avatar-img"
+                  />
+                </div>
+                <h1 className="noesis-title">IA Noesis</h1>
+                <p className="noesis-subtitle">
+                  {selectedAgent
+                    ? `Agente ${selectedAgent.name} ativo. Como posso te ajudar?`
+                    : "Qual agente você quer ativar hoje?"}
+                </p>
+
+                {!selectedAgent && (
+                  <div className="agents-grid">
+                    {loadingAgents ? (
+                      <div className="loading-agents">Carregando agentes...</div>
+                    ) : (
+                      agents.map((agent) => (
+                        <button
+                          key={agent.id}
+                          className="agent-card"
+                          onClick={() => handleStartWithAgent(agent)}
+                        >
+                          <span className="agent-icon">{agent.icon}</span>
+                          <span className="agent-name">{agent.name}</span>
+                          <span className="agent-description">{agent.description}</span>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                )}
+
+                {selectedAgent && (
+                  <div className="selected-agent-section">
+                    <div className="selected-agent-badge">
+                      <span className="agent-icon">{selectedAgent.icon}</span>
+                      <span>{selectedAgent.name}</span>
+                      <button
+                        className="clear-agent-btn"
+                        onClick={() => setSelectedAgent(null)}
+                        title="Trocar agente"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    {selectedAgent.starters && selectedAgent.starters.length > 0 && (
+                      <div className="starters-section">
+                        <p className="starters-label">Comece por:</p>
+                        <div className="starters-grid">
+                          {selectedAgent.starters.map((starter, idx) => (
+                            <button
+                              key={idx}
+                              className="starter-btn"
+                              onClick={() => {
+                                setMensagem(starter);
+                              }}
+                            >
+                              {starter}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
             {historico.map((msg, idx) => {
               const isUser = msg.remetente === "usuario";
               return (
@@ -847,8 +957,8 @@ export default function App() {
                     </div>
                     <div className="msg-content">
                       {!isUser && idx === historico.length - 1 && typingMessageIdx === idx ? (
-                        <TypewriterText 
-                          text={msg.texto} 
+                        <TypewriterText
+                          text={msg.texto}
                           speed={8}
                           onComplete={() => setTypingMessageIdx(null)}
                         />
